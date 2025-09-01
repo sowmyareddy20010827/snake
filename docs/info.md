@@ -9,20 +9,19 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-     Simple implementation of the game "Snake" with VGA Output.
-      Due to size limitations snake can only grow to 9 body parts.
-      Game resets when snake touches border or any of its body parts
-      Vga output is compatible with tiny vga pmod.
+This FIFO is designed to transfer data asynchronously between different clock domains. It supports storage of up to 32 entries, each 4 bits wide, for a total capacity of 16 bytes. The design uses separate read and write pointers with full and empty control signals, ensuring data is written only when space is available and read only when valid data is present. By synchronizing pointers across clock domains, it enables reliable and lossless data transfer.
 
-## How to test
+ 
 
-      After reset snake can be controlled though inputs. When collecting an apple snake grows by 1 body part. 
-      clock has to be set to 25.179 Mhz for vga sync signal generation to work.
-      inputs should be done with push buttons. Not pressed is logic 0, pressed is logic 1
-      So an external circuit with pull down resistors should be used for input.
-      If no tiny VGA pmod is available a vga dac like in this project:https://tinytapeout.com/runs/tt04/178/
-      could probably also be used.
+## How to Test
 
-## External hardware
+To reset the FIFO, keep write_reset and read_reset low while toggling the clock for a short period, then set them high to initialize the module.
 
-VGA Display, external buttons for input 
+### Writing to the FIFO
+
+Place the desired 4-bit value on the write_data bus, check that the full flag is low, and then pulse write_increment high for one cycle of the write_clock to store the value.
+
+### Reading from the FIFO
+
+The current output is continuously available on the read_data bus. If the empty flag is low, the data is valid, and you can advance to the next value by pulsing read_increment high for one cycle of the read_clock.
+
